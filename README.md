@@ -1,22 +1,19 @@
 # Bungholio
 
-Monitors Amazon and sends a text when watched products (like TP) become available. It will send a text at most once per day per product.
+Monitors Amazon and sends a message to a webhook when watched products (like TP) become available. It will send a message at most once per day per product.
+
 
 **Note**
 
-Requires a Twilio account.
-
+Only tested with Discord
 ## Installation
 
 1. Clone this repo.
 2. Modify items.json with the name and url of products you want to watch.
-3. Create a .env file with the following Twilio attributes
+3. Create a .env file with your Webhook URL
 
 ```
-accountSid=twilioSid
-authToken=TwilioAuthToken
-twilioFrom='+yourTwilioPhoneNumber'
-twilioTo='+phoneNumberToText'
+WEBHOOK_URL=URLHERE
 ```
 
 4. Run it

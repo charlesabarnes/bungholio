@@ -2,10 +2,10 @@ const puppeteer = require('puppeteer');
 const Promise = require('bluebird');
 const fs = require('fs');
 const moment = require('moment');
+const fetch = require('node-fetch');
 
 require('dotenv').config();
 
-const client = require('twilio')(process.env.accountSid, process.env.authToken);
 
 const file = require('./items');
 
@@ -21,12 +21,14 @@ async function checkItem(page, item) {
   return canAdd && !notInStock;
 }
 
-async function sendSMS(item) {
-  return client.messages.create({
-    body: `${item.name} available! ${item.url}`,
-    from: process.env.twilioFrom,
-    to: process.env.twilioTo
-  });
+async function pushWebhook(item) {
+  fetch(process.env.WEBHOOK_URL, { 
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ "content": `Item ${item.name} is available ${item.url}`})
+});
 }
 
 async function run() {
@@ -51,7 +53,7 @@ async function run() {
         if (available) {
           item.found = moment().toISOString();
           console.log(`${item.name} is available.`);
-          await sendSMS(item);
+          await pushWebhook(item);
         } else {
           console.log(`${item.name} is not available.`);
         }
